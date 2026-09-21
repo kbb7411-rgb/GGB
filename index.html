@@ -5,51 +5,108 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>가계부</title>
 <style>
+  /* ── 기본 파스텔 팔레트 ─────────────────── */
   :root {
-    --bg: #f5f6f8;
+    --bg: #fbf9ff;
     --panel: #ffffff;
-    --panel-2: #fafbfc;
-    --text: #1c1f23;
-    --muted: #6b7280;
-    --line: #e3e6ea;
-    --accent: #3b6ef5;
-    --income: #1e9e6a;
-    --income-soft: #e4f5ec;
-    --expense: #e0513f;
-    --expense-soft: #fdecea;
-    --shadow: 0 1px 2px rgba(16,24,40,.06), 0 4px 16px rgba(16,24,40,.05);
-    --radius: 14px;
+    --panel-2: #f7f4fd;
+    --text: #453e56;
+    --muted: #948da8;
+    --line: #ece6f8;
+    --accent: #7c6ae8;
+    --accent-soft: #eee9fe;
+    --on-accent: #ffffff;
+    --income: #1f9377;
+    --income-soft: #e2f6ef;
+    --expense: #d9647f;
+    --expense-soft: #fdecf1;
+    --sat: #7a9fe0;
+    --sun: #e08aa0;
+    --glass: rgba(255,255,255,.66);
+    --glass-line: rgba(255,255,255,.75);
+    --shadow: 0 1px 2px rgba(96,80,140,.05), 0 6px 18px rgba(96,80,140,.06);
+    --radius: 20px;
+    --radius-sm: 13px;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #14161a;
-      --panel: #1c1f24;
-      --panel-2: #22262c;
-      --text: #e8eaed;
-      --muted: #9aa2ad;
-      --line: #2e333a;
-      --accent: #6b93ff;
-      --income: #4ecf96;
-      --income-soft: #17322a;
-      --expense: #ff8071;
-      --expense-soft: #35211f;
-      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.3);
+      --bg: #1a1724;
+      --panel: #232031;
+      --panel-2: #2b2739;
+      --text: #ece8f6;
+      --muted: #a49cba;
+      --line: #363048;
+      --accent: #b3a4ff;
+      --accent-soft: #332c4d;
+      --on-accent: #241f33;
+      --income: #7fe0bd;
+      --income-soft: #1e3a34;
+      --expense: #ffa9b9;
+      --expense-soft: #3d2531;
+      --sat: #9fbdf5;
+      --sun: #f3a8ba;
+      --glass: rgba(255,255,255,.09);
+      --glass-line: rgba(255,255,255,.14);
+      --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.28);
     }
   }
   :root[data-theme="dark"] {
-    --bg: #14161a;
-    --panel: #1c1f24;
-    --panel-2: #22262c;
-    --text: #e8eaed;
-    --muted: #9aa2ad;
-    --line: #2e333a;
-    --accent: #6b93ff;
-    --income: #4ecf96;
-    --income-soft: #17322a;
-    --expense: #ff8071;
-    --expense-soft: #35211f;
-    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 4px 16px rgba(0,0,0,.3);
+    --bg: #1a1724;
+    --panel: #232031;
+    --panel-2: #2b2739;
+    --text: #ece8f6;
+    --muted: #a49cba;
+    --line: #363048;
+    --accent: #b3a4ff;
+    --accent-soft: #332c4d;
+    --on-accent: #241f33;
+    --income: #7fe0bd;
+    --income-soft: #1e3a34;
+    --expense: #ffa9b9;
+    --expense-soft: #3d2531;
+    --sat: #9fbdf5;
+    --sun: #f3a8ba;
+    --glass: rgba(255,255,255,.09);
+    --glass-line: rgba(255,255,255,.14);
+    --shadow: 0 1px 2px rgba(0,0,0,.35), 0 6px 18px rgba(0,0,0,.28);
   }
+
+  /* ── 계절 테마 (보고 있는 달에 따라) ────── */
+  [data-season="spring"] { --s1:#ffe9f1; --s2:#fbe8ff; --s3:#eef0ff; --s-glow:#ffd3e5;
+                           --accent:#d0648d; --accent-soft:#fdeaf2; }
+  [data-season="summer"] { --s1:#e1f6ff; --s2:#e6fbf3; --s3:#eef2ff; --s-glow:#c4ecfd;
+                           --accent:#1f8ba6; --accent-soft:#e2f5fb; }
+  [data-season="autumn"] { --s1:#fff0dc; --s2:#ffe7e0; --s3:#fdf2e6; --s-glow:#ffd7ad;
+                           --accent:#b06f33; --accent-soft:#fdeedd; }
+  [data-season="winter"] { --s1:#e9f1ff; --s2:#f2eeff; --s3:#edfaff; --s-glow:#d9e5ff;
+                           --accent:#5f72cb; --accent-soft:#e9ecfd; }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"])[data-season="spring"] {
+      --s1:#3a2333; --s2:#331f3d; --s3:#262042; --s-glow:#5d2f48;
+      --accent:#f3aac8; --accent-soft:#3c2836; }
+    :root:not([data-theme="light"])[data-season="summer"] {
+      --s1:#15323d; --s2:#143633; --s3:#1b2340; --s-glow:#1d4d5c;
+      --accent:#85d7ea; --accent-soft:#1e3640; }
+    :root:not([data-theme="light"])[data-season="autumn"] {
+      --s1:#3a2a1e; --s2:#382320; --s3:#2d2333; --s-glow:#5a3a22;
+      --accent:#efba81; --accent-soft:#3a2c20; }
+    :root:not([data-theme="light"])[data-season="winter"] {
+      --s1:#1f2a44; --s2:#262040; --s3:#1b2c3a; --s-glow:#2e3f6b;
+      --accent:#a9b8f5; --accent-soft:#282f4a; }
+  }
+  :root[data-theme="dark"][data-season="spring"] {
+    --s1:#3a2333; --s2:#331f3d; --s3:#262042; --s-glow:#5d2f48;
+    --accent:#f3aac8; --accent-soft:#3c2836; }
+  :root[data-theme="dark"][data-season="summer"] {
+    --s1:#15323d; --s2:#143633; --s3:#1b2340; --s-glow:#1d4d5c;
+    --accent:#85d7ea; --accent-soft:#1e3640; }
+  :root[data-theme="dark"][data-season="autumn"] {
+    --s1:#3a2a1e; --s2:#382320; --s3:#2d2333; --s-glow:#5a3a22;
+    --accent:#efba81; --accent-soft:#3a2c20; }
+  :root[data-theme="dark"][data-season="winter"] {
+    --s1:#1f2a44; --s2:#262040; --s3:#1b2c3a; --s-glow:#2e3f6b;
+    --accent:#a9b8f5; --accent-soft:#282f4a; }
 
   * { box-sizing: border-box; }
   body {
@@ -58,160 +115,417 @@
     color: var(--text);
     font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI",
                  "Malgun Gothic", "맑은 고딕", system-ui, sans-serif;
-    font-size: 15px;
+    font-size: 16px;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 900px; margin: 0 auto; padding: 28px 16px 64px; }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 22px 16px 64px; }
+  svg.i { display: block; flex: none; }
+  .gi { display: inline-flex; align-items: center; }
 
-  /* ── 헤더 ───────────────────────────────── */
-  header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-  h1 { font-size: 21px; margin: 0; letter-spacing: -.02em; flex: 1; }
+  /* ── 히어로 헤더 ────────────────────────── */
+  .hero {
+    position: relative; overflow: hidden; overflow: clip;
+    border: 1px solid var(--line); border-radius: 28px;
+    padding: 30px 26px 20px; margin-bottom: 16px;
+    background: linear-gradient(130deg, var(--s1) 0%, var(--s2) 52%, var(--s3) 100%);
+    background-size: 220% 220%;
+    box-shadow: var(--shadow);
+    animation: drift 24s ease-in-out infinite alternate;
+  }
+  @keyframes drift {
+    from { background-position: 0% 40%; }
+    to   { background-position: 100% 60%; }
+  }
+  .hero .glow {
+    position: absolute; width: 300px; height: 300px; right: -80px; top: -140px;
+    border-radius: 50%; pointer-events: none;
+    background: radial-gradient(circle, var(--s-glow), transparent 68%);
+    animation: breathe 8s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scale(1);    opacity: .7; }
+    50%      { transform: scale(1.18); opacity: 1;  }
+  }
+
+  /* 떨어지는 계절 입자 */
+  .deco { position: absolute; inset: 0; pointer-events: none; overflow: hidden; overflow: clip; }
+  .parts { position: absolute; inset: 0; }
+  .parts b {
+    position: absolute; top: -16%; left: var(--x); opacity: 0;
+    width: calc(var(--bw) * var(--k)); height: calc(var(--bh) * var(--k));
+    animation: fall var(--s) linear var(--d) infinite;
+  }
+  @keyframes fall {
+    0%   { transform: translate3d(0, 0, 0) rotate(0deg);                  opacity: 0; }
+    14%  { opacity: .9; }
+    86%  { opacity: .9; }
+    100% { transform: translate3d(var(--dx), 300px, 0) rotate(var(--r));  opacity: 0; }
+  }
+  [data-season="spring"] .parts b { --bw: 11px; --bh: 11px; border-radius: 74% 0 74% 0; }
+  [data-season="summer"] .parts b { --bw: 5px;  --bh: 12px;
+                                    border-radius: 50% 50% 48% 48% / 64% 64% 36% 36%; }
+  [data-season="autumn"] .parts b { --bw: 12px; --bh: 9px;  border-radius: 0 76% 0 76%; }
+  [data-season="winter"] .parts b { --bw: 8px;  --bh: 8px;  border-radius: 50%; }
+
+  [data-season="spring"] .parts .c1 { background: #ffc6dd; }
+  [data-season="spring"] .parts .c2 { background: #ffd9ec; }
+  [data-season="spring"] .parts .c3 { background: #f2d6ff; }
+  [data-season="summer"] .parts .c1 { background: #a9dff5; }
+  [data-season="summer"] .parts .c2 { background: #c8eefb; }
+  [data-season="summer"] .parts .c3 { background: #bfe9de; }
+  [data-season="autumn"] .parts .c1 { background: #f6c193; }
+  [data-season="autumn"] .parts .c2 { background: #efab86; }
+  [data-season="autumn"] .parts .c3 { background: #ecd09a; }
+  [data-season="winter"] .parts .c1 { background: #ffffff; }
+  [data-season="winter"] .parts .c2 { background: #e2ecff; }
+  [data-season="winter"] .parts .c3 { background: #f1f7ff; }
+
+  .hero-in { position: relative; display: flex; align-items: flex-start; gap: 12px; }
+  .hero-title {
+    font-size: 42px; font-weight: 800; letter-spacing: -.04em; line-height: 1.05;
+    display: flex; flex: 1;
+  }
+  /* 글자마다 떠오르고(pop), 그 뒤 안쪽 글자가 천천히 흔들린다(bob).
+     한 요소에 두 애니메이션을 겹치지 않도록 바깥/안쪽으로 나눈다. */
+  .hero-title .ch {
+    display: inline-block;
+    animation: pop .75s cubic-bezier(.2,.85,.3,1.35) var(--pd) both;
+  }
+  .hero-title .ch i {
+    display: inline-block; font-style: normal;
+    animation: bob 4s ease-in-out var(--bd) infinite;
+  }
+  @keyframes pop {
+    0%   { opacity: 0; transform: translateY(18px) rotate(-8deg) scale(.86); }
+    100% { opacity: 1; transform: none; }
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-5px); }
+  }
+  .hero-sub {
+    position: relative; margin-top: 6px; font-size: 14px; font-weight: 600;
+    color: var(--text); opacity: 0; letter-spacing: -.01em;
+    animation: fadeUp .8s ease .55s forwards;
+  }
+  .hero-sub .dot { opacity: .45; margin: 0 7px; }
+  .hero-sub .season { color: var(--accent); }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: .78; transform: none; }
+  }
+  .hero .icon-btn {
+    background: var(--glass); border-color: var(--glass-line);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  }
+
   .icon-btn {
     border: 1px solid var(--line); background: var(--panel); color: var(--text);
-    width: 34px; height: 34px; border-radius: 9px; cursor: pointer; font-size: 15px;
-    display: grid; place-items: center; transition: background .15s;
+    width: 38px; height: 38px; border-radius: 13px; cursor: pointer;
+    display: grid; place-items: center; transition: background .15s, transform .15s;
   }
-  .icon-btn:hover { background: var(--panel-2); }
+  .icon-btn:hover { background: var(--panel-2); transform: translateY(-1px); }
 
+  /* 히어로 안의 월 이동 바 */
   .monthbar {
+    position: relative; margin-top: 20px;
     display: flex; align-items: center; justify-content: center; gap: 14px;
-    background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
-    padding: 10px; box-shadow: var(--shadow); margin-bottom: 14px;
+    background: var(--glass); border: 1px solid var(--glass-line);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border-radius: 18px; padding: 9px 10px;
+    animation: fadeUp .8s ease .7s both;
   }
-  .monthbar .label { font-size: 17px; font-weight: 600; min-width: 130px; text-align: center; }
+  .monthbar .label {
+    font-size: 19px; font-weight: 700; min-width: 148px; text-align: center;
+    letter-spacing: -.03em;
+  }
+  .monthbar .icon-btn { background: transparent; border-color: transparent; }
+  .monthbar .icon-btn:hover { background: var(--glass-line); }
   .today-btn {
-    border: none; background: transparent; color: var(--accent);
-    font-size: 13px; cursor: pointer; padding: 4px 8px; border-radius: 6px;
+    border: none; background: transparent; color: var(--accent); font: inherit;
+    font-size: 13.5px; font-weight: 700; cursor: pointer; padding: 5px 10px; border-radius: 10px;
   }
-  .today-btn:hover { background: var(--panel-2); }
+  .today-btn:hover { background: var(--glass-line); }
 
   /* ── 요약 ───────────────────────────────── */
-  .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+  .summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px; margin-bottom: 14px; }
   .card {
     background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
-    padding: 14px 16px; box-shadow: var(--shadow);
+    padding: 15px 17px; box-shadow: var(--shadow);
   }
-  .card .k { font-size: 12.5px; color: var(--muted); margin-bottom: 4px; }
-  .card .v { font-size: 19px; font-weight: 700; letter-spacing: -.02em; white-space: nowrap;
-             overflow: hidden; text-overflow: ellipsis; }
+  .card .k { font-size: 13px; color: var(--muted); margin-bottom: 5px;
+             display: flex; align-items: center; gap: 6px; }
+  .card .v { font-size: 22px; font-weight: 800; letter-spacing: -.03em; white-space: nowrap;
+             overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+  .card.i .k .gi { color: var(--income); }
+  .card.e .k .gi { color: var(--expense); }
+  .card.b .k .gi { color: var(--accent); }
   .v.income { color: var(--income); }
   .v.expense { color: var(--expense); }
 
   /* ── 입력 폼 ────────────────────────────── */
   form.entry {
     background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
-    padding: 14px; box-shadow: var(--shadow); margin-bottom: 14px;
+    padding: 15px; box-shadow: var(--shadow); margin-bottom: 14px;
   }
-  .row { display: grid; grid-template-columns: 130px 104px 130px 1fr 130px auto; gap: 8px; }
+  .row { display: grid; grid-template-columns: 140px 108px 150px 1fr 136px auto; gap: 8px; }
   input, select, button { font: inherit; color: var(--text); }
   input, select {
     background: var(--panel-2); border: 1px solid var(--line);
-    border-radius: 9px; padding: 9px 10px; width: 100%; min-width: 0;
+    border-radius: 12px; padding: 10px 11px; width: 100%; min-width: 0;
   }
-  input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: transparent; }
+  input:focus, select:focus, button:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: -1px; border-color: transparent;
+  }
   input[type="number"] { text-align: right; }
   .submit {
-    background: var(--accent); color: #fff; border: none; border-radius: 9px;
-    padding: 9px 18px; font-weight: 600; cursor: pointer; white-space: nowrap;
+    background: var(--accent); color: var(--on-accent); border: none; border-radius: 12px;
+    padding: 10px 20px; font-weight: 700; cursor: pointer; white-space: nowrap;
   }
   .submit:hover { filter: brightness(1.07); }
   .ghost {
-    background: transparent; border: 1px solid var(--line); border-radius: 9px;
+    background: transparent; border: 1px solid var(--line); border-radius: 12px;
     padding: 9px 14px; cursor: pointer; white-space: nowrap;
   }
   .ghost:hover { background: var(--panel-2); }
   .editing-note {
-    display: none; margin-top: 10px; font-size: 13px; color: var(--accent);
-    align-items: center; gap: 10px;
+    display: none; margin-top: 11px; font-size: 13.5px; color: var(--accent);
+    align-items: center; gap: 8px;
   }
   form.entry.is-editing .editing-note { display: flex; }
 
-  /* ── 분류별 통계 ────────────────────────── */
+  /* ── 패널 공통 ──────────────────────────── */
   .panel {
     background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
     box-shadow: var(--shadow); margin-bottom: 14px; overflow: hidden;
   }
-  .panel > h2 {
-    font-size: 13px; color: var(--muted); font-weight: 600; margin: 0;
-    padding: 13px 16px; border-bottom: 1px solid var(--line); letter-spacing: .01em;
+  .panel-head {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px 12px 17px; border-bottom: 1px solid var(--line);
   }
-  .stats { padding: 6px 16px 14px; }
-  .stat { margin-top: 10px; }
-  .stat .top { display: flex; justify-content: space-between; font-size: 13.5px; margin-bottom: 5px; }
-  .stat .top .amt { color: var(--muted); font-variant-numeric: tabular-nums; }
-  .bar { height: 7px; background: var(--panel-2); border-radius: 99px; overflow: hidden; }
-  .bar > i { display: block; height: 100%; background: var(--expense); border-radius: 99px; }
+  .panel-head h2 {
+    font-size: 14px; color: var(--muted); font-weight: 700; margin: 0; flex: 1;
+    letter-spacing: -.01em; display: flex; align-items: center; gap: 7px;
+  }
+
+  /* 분류 아이콘 칩 */
+  .ico {
+    width: 38px; height: 38px; border-radius: var(--radius-sm); flex: none;
+    display: grid; place-items: center;
+  }
+
+  /* ── 탭 ─────────────────────────────────── */
+  .viewtabs {
+    display: inline-flex; background: var(--panel-2); border: 1px solid var(--line);
+    border-radius: 13px; padding: 3px; gap: 2px;
+  }
+  .viewtabs button {
+    border: none; background: transparent; color: var(--muted); cursor: pointer;
+    font-size: 13.5px; font-weight: 700; padding: 6px 13px; border-radius: 10px;
+    display: flex; align-items: center; gap: 6px; transition: background .15s, color .15s;
+  }
+  .viewtabs button.on { background: var(--panel); color: var(--text); box-shadow: var(--shadow); }
+
+  /* ── 달력 ───────────────────────────────── */
+  .cal-head, .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 7px; }
+  .cal-head { padding: 14px 14px 5px; }
+  .cal { padding: 0 14px 14px; }
+  .cal-head div { text-align: center; font-size: 12px; font-weight: 700; color: var(--muted); }
+  .cal-head .sat { color: var(--sat); }
+  .cal-head .sun { color: var(--sun); }
+
+  .cal-cell {
+    min-height: 92px; border: 1px solid transparent; background: var(--panel-2);
+    border-radius: 15px; padding: 6px 6px 5px; cursor: pointer; text-align: left;
+    display: flex; flex-direction: column; gap: 3px; overflow: hidden;
+    transition: border-color .12s, background .12s, transform .12s;
+  }
+  .cal-cell:hover { border-color: var(--line); transform: translateY(-2px); }
+  .cal-cell.blank { background: transparent; cursor: default; }
+  .cal-cell.blank:hover { transform: none; border-color: transparent; }
+  .cal-cell .d {
+    font-size: 13px; font-weight: 700; color: var(--muted);
+    width: 23px; height: 23px; border-radius: 9px; display: grid; place-items: center;
+    font-variant-numeric: tabular-nums;
+  }
+  .cal-cell .d.sat { color: var(--sat); }
+  .cal-cell .d.sun { color: var(--sun); }
+  .cal-cell.today .d { background: var(--accent); color: var(--on-accent); }
+  .cal-cell.sel { border-color: var(--accent); background: var(--accent-soft); }
+  .cal-cell .chips { display: flex; flex-wrap: wrap; gap: 3px; }
+  .cal-cell .nums {
+    margin-top: auto; display: flex; flex-direction: column; align-items: flex-end;
+    font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.32;
+  }
+  .cal-cell .nums .i { color: var(--income); }
+  .cal-cell .nums .e { color: var(--expense); }
+
+  .daybar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 11px 17px; background: var(--panel-2); border-top: 1px solid var(--line);
+    font-size: 14.5px; font-weight: 700;
+  }
+  .daybar .sum { margin-left: auto; font-size: 13.5px; font-variant-numeric: tabular-nums;
+                 font-weight: 700; }
+  .daybar .add {
+    border: 1px solid var(--line); background: var(--panel); color: var(--accent);
+    border-radius: 10px; padding: 5px 11px 5px 8px; font-size: 13px; cursor: pointer;
+    font-weight: 700; display: inline-flex; align-items: center; gap: 4px;
+  }
+  .daybar .add:hover { background: var(--accent-soft); }
+
+  /* ── 분류별 통계 ────────────────────────── */
+  .stats { padding: 8px 17px 18px; }
+  .stat { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+  .stat .grow { flex: 1; min-width: 0; }
+  .stat .top { display: flex; justify-content: space-between; gap: 8px;
+               font-size: 14px; margin-bottom: 6px; }
+  .stat .top .name { font-weight: 700; }
+  .stat .top .amt { color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap;
+                    font-weight: 500; }
+  .bar { height: 8px; background: var(--panel-2); border-radius: 99px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; border-radius: 99px; }
+
+  /* ── 전월 대비 ──────────────────────────── */
+  .cmp { padding: 14px 17px 20px; }
+  .cmp-note {
+    font-size: 13px; color: var(--muted); background: var(--panel-2); font-weight: 600;
+    border-radius: 12px; padding: 8px 12px; text-align: center;
+  }
+  .cmp-block { display: flex; gap: 12px; align-items: flex-start; margin-top: 16px; }
+  .cmp-block .grow { flex: 1; min-width: 0; }
+  .cmp-top { display: flex; justify-content: space-between; gap: 8px; align-items: center;
+             margin-bottom: 4px; }
+  .cmp-top .name { font-weight: 700; font-size: 14px; }
+  .delta {
+    font-size: 12.5px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap;
+    padding: 3px 10px; border-radius: 99px;
+  }
+  .delta.good { color: var(--income); background: var(--income-soft); }
+  .delta.bad  { color: var(--expense); background: var(--expense-soft); }
+  .delta.flat { color: var(--muted); background: var(--panel-2); }
+  .twin {
+    display: grid; grid-template-columns: 48px 1fr auto; gap: 10px; align-items: center;
+    font-size: 12px; color: var(--muted); margin-top: 5px;
+  }
+  .twin .bar { height: 7px; }
+  .twin .num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .twin.cur .num { color: var(--text); font-weight: 700; }
+  .cmp-sub {
+    margin: 24px 0 -4px; font-size: 13px; color: var(--muted); font-weight: 700;
+    display: flex; align-items: center; gap: 7px;
+  }
+  .cmp-more { margin-top: 14px; font-size: 13px; color: var(--muted); text-align: center; }
 
   /* ── 내역 ───────────────────────────────── */
   .daygroup { border-bottom: 1px solid var(--line); }
   .daygroup:last-child { border-bottom: none; }
   .dayhead {
     display: flex; justify-content: space-between; align-items: baseline;
-    padding: 10px 16px; background: var(--panel-2); font-size: 13px; color: var(--muted);
+    padding: 10px 17px; background: var(--panel-2); font-size: 13.5px; color: var(--muted);
+    font-weight: 600;
   }
   .dayhead .sum { font-variant-numeric: tabular-nums; }
   .item {
-    display: grid; grid-template-columns: 82px 1fr auto auto;
-    align-items: center; gap: 10px; padding: 11px 16px;
+    display: grid; grid-template-columns: 38px 1fr auto auto;
+    align-items: center; gap: 12px; padding: 10px 17px;
     border-top: 1px solid var(--line);
   }
   .item:hover { background: var(--panel-2); }
-  .tag {
-    font-size: 12px; padding: 3px 0; border-radius: 6px; text-align: center;
-    background: var(--expense-soft); color: var(--expense); font-weight: 600;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  .item .txt { min-width: 0; }
+  .item .txt b {
+    display: block; font-weight: 600; font-size: 15.5px; letter-spacing: -.01em;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
-  .tag.income { background: var(--income-soft); color: var(--income); }
-  .memo { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .memo .empty { color: var(--muted); }
-  .amt { font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .item .txt em { font-style: normal; font-size: 12.5px; color: var(--muted); }
+  .amt { font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; font-size: 15px; }
   .amt.income { color: var(--income); }
   .amt.expense { color: var(--expense); }
-  .acts { display: flex; gap: 4px; }
+  .acts { display: flex; gap: 2px; }
   .acts button {
     border: none; background: transparent; color: var(--muted); cursor: pointer;
-    padding: 4px 7px; border-radius: 6px; font-size: 13px;
+    padding: 7px; border-radius: 10px; display: grid; place-items: center;
   }
   .acts button:hover { background: var(--bg); color: var(--text); }
-  .empty-state { padding: 44px 16px; text-align: center; color: var(--muted); font-size: 14px; }
+  .empty-state { padding: 42px 16px; text-align: center; color: var(--muted); font-size: 14.5px; }
+  .empty-state .big { display: inline-flex; margin-bottom: 10px; opacity: .55; }
 
   footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
-  footer .ghost { font-size: 13px; padding: 7px 12px; }
+  footer .ghost { font-size: 13.5px; padding: 8px 13px; }
+
   .danger { color: var(--expense); }
 
+  @media (prefers-reduced-motion: reduce) {
+    .parts, .hero .glow { display: none; }
+    .hero, .hero-title .ch, .hero-title .ch i, .hero-sub, .monthbar { animation: none !important; opacity: 1; }
+  }
+
   @media (max-width: 720px) {
-    .wrap { padding: 20px 16px 48px; }
+    .wrap { padding: 16px 12px 48px; }
+    .hero { padding: 24px 20px 16px; border-radius: 24px; }
+    .hero-title { font-size: 35px; }
+    .monthbar { margin-top: 16px; gap: 8px; }
+    .monthbar .label { font-size: 17px; min-width: 120px; }
     .row { grid-template-columns: 1fr 1fr; }
     .row .memo-in, .row .submit { grid-column: 1 / -1; }
-    .summary { grid-template-columns: 1fr; }
-    .card { display: flex; justify-content: space-between; align-items: baseline; }
+    .summary { grid-template-columns: 1fr; gap: 9px; }
+    .card { display: flex; justify-content: space-between; align-items: center; padding: 13px 16px; }
     .card .k { margin-bottom: 0; }
-    .item { grid-template-columns: 70px 1fr auto; row-gap: 2px; }
+    .cal-head, .cal { gap: 5px; }
+    .cal-head { padding: 13px 9px 4px; }
+    .cal { padding: 0 9px 11px; }
+    .cal-cell { min-height: 70px; padding: 4px 4px 3px; border-radius: 13px; }
+    .cal-cell .chips { gap: 2px; }
+    .cal-cell .nums { font-size: 9.5px; }
+    .ico { width: 34px; height: 34px; }
+    .item { grid-template-columns: 34px 1fr auto; row-gap: 2px; column-gap: 10px; padding: 10px 13px; }
     .acts { grid-column: 3; }
     .amt { grid-column: 2 / 3; text-align: right; }
+    .stats, .cmp { padding-left: 13px; padding-right: 13px; }
+    .twin { grid-template-columns: 44px 1fr auto; gap: 8px; font-size: 11.5px; }
+    .panel-head { padding: 12px 12px 12px 14px; }
+    .viewtabs button { padding: 6px 10px; }
   }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <header>
-    <h1>가계부</h1>
-    <button class="icon-btn" id="themeBtn" title="테마 전환" aria-label="테마 전환">◐</button>
+  <header class="hero" id="hero">
+    <div class="deco" aria-hidden="true">
+      <div class="glow"></div>
+      <div class="parts" id="parts"></div>
+    </div>
+
+    <div class="hero-in">
+      <h1 class="hero-title" id="heroTitle"></h1>
+      <button class="icon-btn" id="themeBtn" title="테마 전환" aria-label="테마 전환">
+        <span class="gi" data-ic="moon" data-sz="19"></span>
+      </button>
+    </div>
+    <div class="hero-sub" id="heroSub"></div>
+
+    <div class="monthbar">
+      <button class="icon-btn" id="prevM" aria-label="이전 달">
+        <span class="gi" data-ic="left" data-sz="19"></span>
+      </button>
+      <div class="label" id="monthLabel"></div>
+      <button class="icon-btn" id="nextM" aria-label="다음 달">
+        <span class="gi" data-ic="right" data-sz="19"></span>
+      </button>
+      <button class="today-btn" id="todayBtn">이번 달</button>
+    </div>
   </header>
 
-  <div class="monthbar">
-    <button class="icon-btn" id="prevM" aria-label="이전 달">‹</button>
-    <div class="label" id="monthLabel"></div>
-    <button class="icon-btn" id="nextM" aria-label="다음 달">›</button>
-    <button class="today-btn" id="todayBtn">이번 달</button>
-  </div>
 
   <div class="summary">
-    <div class="card"><div class="k">수입</div><div class="v income" id="sumIncome">0원</div></div>
-    <div class="card"><div class="k">지출</div><div class="v expense" id="sumExpense">0원</div></div>
-    <div class="card"><div class="k">잔액</div><div class="v" id="sumBalance">0원</div></div>
+    <div class="card i"><div class="k"><span class="gi" data-ic="heart" data-sz="17"></span>수입</div>
+      <div class="v income" id="sumIncome">0원</div></div>
+    <div class="card e"><div class="k"><span class="gi" data-ic="coin" data-sz="17"></span>지출</div>
+      <div class="v expense" id="sumExpense">0원</div></div>
+    <div class="card b"><div class="k"><span class="gi" data-ic="piggy" data-sz="17"></span>잔액</div>
+      <div class="v" id="sumBalance">0원</div></div>
   </div>
 
   <form class="entry" id="entryForm" autocomplete="off">
@@ -227,19 +541,43 @@
       <button type="submit" class="submit" id="submitBtn">추가</button>
     </div>
     <div class="editing-note">
+      <span class="gi" data-ic="pencil" data-sz="16"></span>
       <span>수정 중입니다.</span>
       <button type="button" class="ghost" id="cancelEdit">취소</button>
     </div>
   </form>
 
-  <div class="panel" id="statsPanel">
-    <h2>분류별 지출</h2>
+  <div class="panel" id="anaPanel">
+    <div class="panel-head">
+      <h2><span class="gi" data-ic="chart" data-sz="17"></span>분석</h2>
+      <div class="viewtabs" id="anaTabs">
+        <button type="button" data-ana="cat"><span class="gi" data-ic="pie" data-sz="16"></span>분류별</button>
+        <button type="button" data-ana="cmp"><span class="gi" data-ic="compare" data-sz="16"></span>전월 대비</button>
+      </div>
+    </div>
     <div class="stats" id="stats"></div>
+    <div class="cmp" id="cmp"></div>
   </div>
 
   <div class="panel">
-    <h2>내역</h2>
-    <div id="list"></div>
+    <div class="panel-head">
+      <h2><span class="gi" data-ic="folder" data-sz="17"></span>내역</h2>
+      <div class="viewtabs" id="viewTabs">
+        <button type="button" data-view="calendar"><span class="gi" data-ic="calendar" data-sz="16"></span>달력</button>
+        <button type="button" data-view="list"><span class="gi" data-ic="list" data-sz="16"></span>목록</button>
+      </div>
+    </div>
+
+    <div id="calView">
+      <div class="cal-head">
+        <div class="sun">일</div><div>월</div><div>화</div><div>수</div>
+        <div>목</div><div>금</div><div class="sat">토</div>
+      </div>
+      <div class="cal" id="cal"></div>
+      <div id="dayPane"></div>
+    </div>
+
+    <div id="listView"><div id="list"></div></div>
   </div>
 
   <footer>
@@ -255,17 +593,115 @@
 
   var STORE = "ggb-ledger-v1";
   var THEME = "ggb-ledger-theme";
+  var VIEW  = "ggb-ledger-view";
+  var ANA   = "ggb-ledger-ana";
 
-  var CATEGORIES = {
-    expense: ["식비", "카페/간식", "교통", "주거/통신", "생활용품", "의료/건강",
-              "문화/여가", "교육", "쇼핑", "경조사", "기타"],
-    income:  ["급여", "용돈", "부수입", "금융수입", "환급", "기타"]
+  /* ── 아이콘 (단색 라인 SVG, 색은 currentColor) ── */
+  var ICONS = {
+    rice:     '<path d="M3.6 11h16.8c0 4.3-3.8 7.4-8.4 7.4S3.6 15.3 3.6 11Z"/><path d="M8.6 8.3C8.6 6.8 10.1 5.7 12 5.7s3.4 1.1 3.4 2.6"/>',
+    cup:      '<path d="M5 7.2h11v6.4a5.5 5.5 0 0 1-11 0Z"/><path d="M16 8.8h1.7a2.3 2.3 0 0 1 0 4.5H16"/><path d="M5 19.4h11"/>',
+    bus:      '<rect x="4.5" y="4.6" width="15" height="11.8" rx="3.2"/><path d="M4.5 10.6h15"/><circle cx="8.4" cy="13.6" r=".9"/><circle cx="15.6" cy="13.6" r=".9"/><path d="M7.2 16.4v2.1M16.8 16.4v2.1"/>',
+    house:    '<path d="M4 10.6 12 4.2l8 6.4"/><path d="M6.1 9.8V19h11.8V9.8"/><path d="M10 19v-4.6h4V19"/>',
+    bottle:   '<rect x="8.4" y="8.2" width="7.2" height="12.2" rx="2.6"/><path d="M10.4 8.2V5.6h3.2v2.6"/><path d="M13.6 6.6h2.9"/>',
+    heartmed: '<path d="M12 19.6s-6.6-4.1-6.6-8.4A3.9 3.9 0 0 1 12 8.6a3.9 3.9 0 0 1 6.6 2.6c0 4.3-6.6 8.4-6.6 8.4Z"/><path d="M12 11.9v3.2M10.4 13.5h3.2"/>',
+    ticket:   '<path d="M4 8.6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1a2.5 2.5 0 0 0 0 4.9v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1a2.5 2.5 0 0 0 0-4.9Z"/><path d="M13.6 7.4v1.8M13.6 11.1v1.8M13.6 14.8v1.8"/>',
+    book:     '<path d="M4.8 5.6h4.7a2.6 2.6 0 0 1 2.5 1.6 2.6 2.6 0 0 1 2.5-1.6h4.7v11.9h-4.7a2.6 2.6 0 0 0-2.5 1.6 2.6 2.6 0 0 0-2.5-1.6H4.8Z"/><path d="M12 7.2v11.9"/>',
+    bag:      '<path d="M5.6 8.2h12.8l-1 11.4a1 1 0 0 1-1 .9H7.6a1 1 0 0 1-1-.9Z"/><path d="M9.1 10.2V7.4a2.9 2.9 0 0 1 5.8 0v2.8"/>',
+    gift:     '<rect x="4.2" y="9.7" width="15.6" height="9.9" rx="2.2"/><path d="M3.4 9.7h17.2"/><path d="M12 9.7v9.9"/><path d="M12 9.7S9.9 4.9 8.1 5.9 8.4 9.7 12 9.7Zm0 0s2.1-4.8 3.9-3.8-.3 3.8-3.9 3.8Z"/>',
+    spark:    '<path d="M11.2 4.6 12.7 9l4.4 1.5-4.4 1.5-1.5 4.4-1.5-4.4L5.3 10.5 9.7 9Z"/><path d="M17.6 16.4v3.2M16 18h3.2"/>',
+    wallet:   '<rect x="3.6" y="6.4" width="16.8" height="11.9" rx="3.2"/><path d="M3.6 10.5h16.8"/><circle cx="16.6" cy="14.4" r="1.2"/>',
+    envelope: '<rect x="3.6" y="6.2" width="16.8" height="11.6" rx="2.6"/><path d="m4.4 7.6 7.6 5.3 7.6-5.3"/>',
+    case_:    '<rect x="3.6" y="8.1" width="16.8" height="10.4" rx="2.6"/><path d="M9.1 8.1V6.7a1.6 1.6 0 0 1 1.6-1.6h2.6a1.6 1.6 0 0 1 1.6 1.6v1.4"/><path d="M3.6 12.6h16.8"/>',
+    trend:    '<path d="m4.2 16.4 5.3-5.3 3.4 3.4 6.9-6.9"/><path d="M15.2 7.6h4.6v4.6"/><path d="M4.2 19.8h15.6"/>',
+    refund:   '<path d="M19.6 12.2a7.6 7.6 0 1 1-2.3-5.4"/><path d="M20.1 4.6v4.6h-4.6"/>',
+    piggy:    '<path d="M3.9 12.9c0-3.4 3.4-6.1 7.6-6.1 1.1 0 2.1.2 3 .5l2.9-1.7-.6 3a6 6 0 0 1 2 3.1h1.3v3.2h-1.8a6.6 6.6 0 0 1-2 2.2v2h-2.7v-1.2a10 10 0 0 1-4.1 0V19H6.7v-2a5.9 5.9 0 0 1-2.8-4.1Z"/><circle cx="9.7" cy="12.3" r=".8"/>',
+    heart:    '<path d="M12 19.7s-7-4.4-7-9.1A4 4 0 0 1 12 8a4 4 0 0 1 7 2.6c0 4.7-7 9.1-7 9.1Z"/>',
+    coin:     '<circle cx="12" cy="12" r="8"/><path d="m8.2 8.9 1.8 5.6L12 10l2 4.5 1.8-5.6"/><path d="M7.7 11.6h8.6M7.7 13.3h8.6"/>',
+    calendar: '<rect x="3.6" y="5.6" width="16.8" height="14.8" rx="3.4"/><path d="M3.6 10.2h16.8"/><path d="M8.2 3.6v4M15.8 3.6v4"/>',
+    list:     '<path d="M8.6 7.2h11.2M8.6 12h11.2M8.6 16.8h11.2"/><circle cx="4.6" cy="7.2" r="1.2"/><circle cx="4.6" cy="12" r="1.2"/><circle cx="4.6" cy="16.8" r="1.2"/>',
+    pie:      '<path d="M12 3.8v8.4h8.4A8.4 8.4 0 0 0 12 3.8Z"/><path d="M20 15.2A8.4 8.4 0 1 1 10.1 3.9"/>',
+    compare:  '<path d="M7.2 20V6.4"/><path d="m4 9.6 3.2-3.2 3.2 3.2"/><path d="M16.8 4v13.6"/><path d="m20 14.4-3.2 3.2-3.2-3.2"/>',
+    chart:    '<path d="M4 19.6h16"/><path d="M7.4 19.6V9.8M12 19.6V5.4M16.6 19.6v-7"/>',
+    folder:   '<path d="M3.6 7.6a2.2 2.2 0 0 1 2.2-2.2h3l2.1 2.4h7.3a2.2 2.2 0 0 1 2.2 2.2v7.4a2.2 2.2 0 0 1-2.2 2.2H5.8a2.2 2.2 0 0 1-2.2-2.2Z"/>',
+    pencil:   '<path d="m16.4 4.4 3.2 3.2L8.9 18.3l-4.3 1.1 1.1-4.3Z"/><path d="m14.2 6.6 3.2 3.2"/>',
+    trash:    '<path d="M4.6 7.2h14.8"/><path d="M9.6 7.2V5.7a1.6 1.6 0 0 1 1.6-1.6h1.6a1.6 1.6 0 0 1 1.6 1.6v1.5"/><path d="m6.6 7.2.9 11.2a2 2 0 0 0 2 1.8h5a2 2 0 0 0 2-1.8l.9-11.2"/>',
+    moon:     '<path d="M19.4 14.6A8.2 8.2 0 0 1 9.4 4.6a7.7 7.7 0 1 0 10 10Z"/>',
+    plus:     '<path d="M12 6.2v11.6M6.2 12h11.6"/>',
+    left:     '<path d="M14.4 5.4 7.8 12l6.6 6.6"/>',
+    right:    '<path d="M9.6 5.4 16.2 12l-6.6 6.6"/>',
+    hand:     '<path d="M9.4 12.4V6.2a1.6 1.6 0 0 1 3.2 0v5"/><path d="M12.6 11.4v-1a1.6 1.6 0 1 1 3.2 0v1.6"/><path d="M15.8 12.4V11a1.6 1.6 0 1 1 3.2 0v4.8a4.6 4.6 0 0 1-4.6 4.6h-2a4.4 4.4 0 0 1-3.4-1.6l-3-3.7a1.6 1.6 0 0 1 2.3-2.2l1.1 1"/>'
   };
+  function ic(name, size) {
+    var s = size || 22;
+    var w = s <= 16 ? 2.15 : 1.75;
+    return '<svg class="i" viewBox="0 0 24 24" width="' + s + '" height="' + s + '" fill="none" ' +
+           'stroke="currentColor" stroke-width="' + w + '" stroke-linecap="round" ' +
+           'stroke-linejoin="round" aria-hidden="true">' + (ICONS[name] || ICONS.spark) + "</svg>";
+  }
+
+  /* 분류 이름은 기존 데이터와 그대로 호환됩니다. 아이콘과 파스텔 색만 덧붙였습니다. */
+  var META = {
+    expense: [
+      ["식비",      "rice",     "#f0a183"],
+      ["카페/간식", "cup",      "#bfa3e6"],
+      ["교통",      "bus",      "#8ec3e4"],
+      ["주거/통신", "house",    "#9db2e8"],
+      ["생활용품",  "bottle",   "#8ccfae"],
+      ["의료/건강", "heartmed", "#ea9aa2"],
+      ["문화/여가", "ticket",   "#e5b677"],
+      ["교육",      "book",     "#a3a6e4"],
+      ["쇼핑",      "bag",      "#e89cb5"],
+      ["경조사",    "gift",     "#dfa1cb"],
+      ["기타",      "spark",    "#adb3c2"]
+    ],
+    income: [
+      ["급여",      "wallet",   "#7cc79f"],
+      ["용돈",      "envelope", "#9fd199"],
+      ["부수입",    "case_",    "#7fc8c2"],
+      ["금융수입",  "trend",    "#8cc6dd"],
+      ["환급",      "refund",   "#b6d089"],
+      ["기타",      "spark",    "#adb3c2"]
+    ]
+  };
+  var TINT = "2b";   /* 아이콘 칩 배경 투명도 */
+
+  var LOOKUP = {};
+  Object.keys(META).forEach(function (t) {
+    LOOKUP[t] = {};
+    META[t].forEach(function (row) { LOOKUP[t][row[0]] = { icon: row[1], color: row[2] }; });
+  });
+  function meta(type, name) {
+    var m = LOOKUP[type] && LOOKUP[type][name];
+    return m || { icon: "spark", color: "#adb3c2" };
+  }
+  /* 분류 아이콘 칩 한 덩어리 */
+  function chip(type, name, size) {
+    var m = meta(type, name);
+    return '<span class="ico" style="color:' + m.color + ";background:" + m.color + TINT + '">' +
+           ic(m.icon, size || 21) + "</span>";
+  }
+
+  /* ── 계절 ──────────────────────────────── */
+  var SEASONS = {
+    spring: ["봄", "꽃 피는 계절, 차곡차곡"],
+    summer: ["여름", "시원하게 한 달 정리"],
+    autumn: ["가을", "알차게 거두는 달"],
+    winter: ["겨울", "포근하게 마무리"]
+  };
+  function seasonOf(m) {
+    if (m >= 2 && m <= 4) return "spring";
+    if (m >= 5 && m <= 7) return "summer";
+    if (m >= 8 && m <= 10) return "autumn";
+    return "winter";
+  }
 
   var items = load();
   var cursor = new Date();          // 보고 있는 달
   cursor.setDate(1);
   var editingId = null;
+  var view = pref(VIEW, "calendar", ["calendar", "list"]);   // 내역 보기
+  var ana  = pref(ANA,  "cat",      ["cat", "cmp"]);         // 분석 보기
+  var selected = null;              // 달력에서 고른 날짜 (YYYY-MM-DD)
 
   var $ = function (id) { return document.getElementById(id); };
 
@@ -280,12 +716,22 @@
   function save() {
     try { localStorage.setItem(STORE, JSON.stringify(items)); } catch (e) {}
   }
+  function pref(key, fallback, allowed) {
+    try {
+      var v = localStorage.getItem(key);
+      return allowed.indexOf(v) !== -1 ? v : fallback;
+    } catch (e) { return fallback; }
+  }
+  function remember(key, value) {
+    try { localStorage.setItem(key, value); } catch (e) {}
+  }
 
   /* ── 유틸 ──────────────────────────────── */
   function won(n) { return n.toLocaleString("ko-KR") + "원"; }
   function pad(n) { return (n < 10 ? "0" : "") + n; }
   function ymd(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
   function monthKey(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1); }
+  function monthName(d) { return d.getFullYear() + "년 " + (d.getMonth() + 1) + "월"; }
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
@@ -295,72 +741,292 @@
     var d = new Date(dateStr + "T00:00:00");
     return ["일", "월", "화", "수", "목", "금", "토"][d.getDay()];
   }
-  function currentItems() {
-    var key = monthKey(cursor);
+  function itemsOf(monthDate) {
+    var key = monthKey(monthDate);
     return items.filter(function (it) { return it.date.slice(0, 7) === key; });
   }
-
+  function prevMonth() { return new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1); }
+  /* 좁은 칸에 들어갈 짧은 금액 (12,300 → 1.2만) */
+  function short(n) {
+    if (n >= 1e8) return round1(n / 1e8) + "억";
+    if (n >= 1e4) return round1(n / 1e4) + "만";
+    return n.toLocaleString("ko-KR");
+  }
+  function round1(v) { return String(v >= 100 ? Math.round(v) : Math.round(v * 10) / 10); }
+  function pct(part, whole) { return whole > 0 ? Math.min(100, part / whole * 100) : 0; }
+  function blank(icon, text) {
+    return '<div class="empty-state"><span class="big">' + ic(icon, 30) + "</span><br>" + text + "</div>";
+  }
   /* ── 분류 옵션 ─────────────────────────── */
   function fillCategories(keep) {
     var sel = $("fCategory");
-    var list = CATEGORIES[$("fType").value];
-    sel.innerHTML = list.map(function (c) {
-      return '<option value="' + esc(c) + '">' + esc(c) + "</option>";
+    var list = META[$("fType").value];
+    sel.innerHTML = list.map(function (row) {
+      return '<option value="' + esc(row[0]) + '">' + esc(row[0]) + "</option>";
     }).join("");
-    if (keep && list.indexOf(keep) !== -1) sel.value = keep;
+    if (keep) {
+      for (var i = 0; i < list.length; i++) {
+        if (list[i][0] === keep) { sel.value = keep; break; }
+      }
+    }
   }
 
   /* ── 렌더 ──────────────────────────────── */
   function render() {
-    $("monthLabel").textContent = cursor.getFullYear() + "년 " + (cursor.getMonth() + 1) + "월";
+    var season = seasonOf(cursor.getMonth());
+    document.documentElement.setAttribute("data-season", season);
+    $("monthLabel").textContent = monthName(cursor);
+    $("heroSub").innerHTML = '<span class="season">' + SEASONS[season][0] + "</span>" +
+                             '<span class="dot">·</span>' + SEASONS[season][1];
 
-    var rows = currentItems().slice().sort(function (a, b) {
+    var rows = itemsOf(cursor).slice().sort(function (a, b) {
       if (a.date !== b.date) return a.date < b.date ? 1 : -1;   // 최신 날짜 먼저
       return b.created - a.created;
     });
 
+    var t = totals(rows);
+    $("sumIncome").textContent = won(t.income);
+    $("sumExpense").textContent = won(t.expense);
+    var balEl = $("sumBalance");
+    balEl.textContent = won(t.balance);
+    balEl.className = "v" + (t.balance > 0 ? " income" : t.balance < 0 ? " expense" : "");
+
+    renderAnalysis(rows, t);
+
+    var cal = view === "calendar";
+    $("calView").style.display = cal ? "" : "none";
+    $("listView").style.display = cal ? "none" : "";
+    markTabs($("viewTabs"), "data-view", view);
+
+    if (cal) renderCalendar(rows); else renderList(rows, $("list"));
+  }
+
+  function markTabs(box, attr, active) {
+    Array.prototype.forEach.call(box.children, function (b) {
+      b.classList.toggle("on", b.getAttribute(attr) === active);
+    });
+  }
+
+  function totals(rows) {
     var income = 0, expense = 0;
     rows.forEach(function (it) {
       if (it.type === "income") income += it.amount; else expense += it.amount;
     });
-    $("sumIncome").textContent = won(income);
-    $("sumExpense").textContent = won(expense);
-    var bal = income - expense;
-    var balEl = $("sumBalance");
-    balEl.textContent = won(bal);
-    balEl.className = "v" + (bal > 0 ? " income" : bal < 0 ? " expense" : "");
+    return { income: income, expense: expense, balance: income - expense };
+  }
 
-    renderStats(rows, expense);
-    renderList(rows);
+  function byCategory(rows, type) {
+    var by = {};
+    rows.forEach(function (it) {
+      if (it.type !== type) return;
+      by[it.category] = (by[it.category] || 0) + it.amount;
+    });
+    return by;
+  }
+
+  /* ── 분석 패널 ─────────────────────────── */
+  function renderAnalysis(rows, t) {
+    var prev = itemsOf(prevMonth());
+    var panel = $("anaPanel");
+    if (!rows.length && !prev.length) { panel.style.display = "none"; return; }
+    panel.style.display = "";
+
+    markTabs($("anaTabs"), "data-ana", ana);
+    var cat = ana === "cat";
+    $("stats").style.display = cat ? "" : "none";
+    $("cmp").style.display = cat ? "none" : "";
+
+    if (cat) renderStats(rows, t.expense); else renderCompare(rows, prev);
   }
 
   function renderStats(rows, totalExpense) {
-    var panel = $("statsPanel");
-    if (!totalExpense) { panel.style.display = "none"; return; }
-    panel.style.display = "";
+    if (!totalExpense) { $("stats").innerHTML = blank("pie", "이 달은 아직 지출이 없습니다."); return; }
 
-    var by = {};
-    rows.forEach(function (it) {
-      if (it.type !== "expense") return;
-      by[it.category] = (by[it.category] || 0) + it.amount;
-    });
+    var by = byCategory(rows, "expense");
     var pairs = Object.keys(by).map(function (k) { return [k, by[k]]; })
                       .sort(function (a, b) { return b[1] - a[1]; });
 
     $("stats").innerHTML = pairs.map(function (p) {
-      var pct = Math.round(p[1] / totalExpense * 100);
-      return '<div class="stat">' +
-               '<div class="top"><span>' + esc(p[0]) + "</span>" +
-               '<span class="amt">' + won(p[1]) + " · " + pct + "%</span></div>" +
-               '<div class="bar"><i style="width:' + Math.max(pct, 1) + '%"></i></div>' +
+      var share = Math.round(p[1] / totalExpense * 100);
+      var m = meta("expense", p[0]);
+      return '<div class="stat">' + chip("expense", p[0]) +
+               '<div class="grow">' +
+                 '<div class="top"><span class="name">' + esc(p[0]) + "</span>" +
+                 '<span class="amt">' + won(p[1]) + " · " + share + "%</span></div>" +
+                 '<div class="bar"><i style="width:' + Math.max(share, 2) +
+                   "%;background:" + m.color + '"></i></div>' +
+               "</div>" +
              "</div>";
     }).join("");
   }
 
-  function renderList(rows) {
-    var box = $("list");
+  /* ── 전월 대비 ─────────────────────────── */
+  /* 두 달치 막대를 같은 기준(max)으로 그려서 길이를 그대로 비교할 수 있게 한다 */
+  function twinBars(prevV, curV, color) {
+    var max = Math.max(Math.abs(prevV), Math.abs(curV));
+    return '<div class="twin"><span>지난달</span>' +
+             '<span class="bar"><i style="width:' + pct(Math.abs(prevV), max) +
+               "%;background:" + color + ';opacity:.45"></i></span>' +
+             '<span class="num">' + won(prevV) + "</span></div>" +
+           '<div class="twin cur"><span>이번 달</span>' +
+             '<span class="bar"><i style="width:' + pct(Math.abs(curV), max) +
+               "%;background:" + color + '"></i></span>' +
+             '<span class="num">' + won(curV) + "</span></div>";
+  }
+
+  /* goodWhenUp: 늘어난 게 좋은 항목인지 (수입·잔액은 true, 지출은 false) */
+  function deltaBadge(prevV, curV, goodWhenUp) {
+    var diff = curV - prevV;
+    if (diff === 0) return '<span class="delta flat">변화 없음</span>';
+    var tone = (diff > 0) === goodWhenUp ? "good" : "bad";
+    var rate = prevV > 0 ? " · " + Math.round(Math.abs(diff) / prevV * 100) + "%" : "";
+    return '<span class="delta ' + tone + '">' + (diff > 0 ? "▲ " : "▼ ") +
+           won(Math.abs(diff)) + rate + "</span>";
+  }
+
+  function cmpBlock(name, iconChip, color, prevV, curV, goodWhenUp) {
+    return '<div class="cmp-block">' + iconChip +
+             '<div class="grow">' +
+               '<div class="cmp-top"><span class="name">' + name + "</span>" +
+               deltaBadge(prevV, curV, goodWhenUp) + "</div>" +
+               twinBars(prevV, curV, color) +
+             "</div>" +
+           "</div>";
+  }
+  function plainChip(icon, color) {
+    return '<span class="ico" style="color:' + color + ";background:" + color + TINT + '">' +
+           ic(icon, 21) + "</span>";
+  }
+
+  function renderCompare(rows, prevRows) {
+    var c = totals(rows), p = totals(prevRows);
+    var inc = "#7cc79f", exp = "#e89cb5", bal = "#a3a6e4";
+
+    var html = '<div class="cmp-note">' +
+                 monthName(prevMonth()) + "  →  " + monthName(cursor) +
+               "</div>" +
+               cmpBlock("수입", plainChip("heart", inc), inc, p.income, c.income, true) +
+               cmpBlock("지출", plainChip("coin", exp), exp, p.expense, c.expense, false) +
+               cmpBlock("잔액", plainChip("piggy", bal), bal, p.balance, c.balance, true);
+
+    /* 분류별 지출 증감 */
+    var curBy = byCategory(rows, "expense"), prevBy = byCategory(prevRows, "expense");
+    var names = Object.keys(curBy);
+    Object.keys(prevBy).forEach(function (k) { if (names.indexOf(k) === -1) names.push(k); });
+
+    var moves = names.map(function (k) {
+      return { name: k, cur: curBy[k] || 0, prev: prevBy[k] || 0 };
+    }).filter(function (m) {
+      return m.cur !== m.prev;
+    }).sort(function (a, b) {
+      return Math.abs(b.cur - b.prev) - Math.abs(a.cur - a.prev);
+    });
+
+    if (moves.length) {
+      html += '<div class="cmp-sub"><span class="gi">' + ic("compare", 16) + "</span>분류별 지출 증감</div>";
+      html += moves.slice(0, 8).map(function (m) {
+        return cmpBlock(esc(m.name), chip("expense", m.name),
+                        meta("expense", m.name).color, m.prev, m.cur, false);
+      }).join("");
+      if (moves.length > 8) {
+        html += '<div class="cmp-more">외 ' + (moves.length - 8) + "개 분류</div>";
+      }
+    }
+
+    $("cmp").innerHTML = html;
+  }
+
+  /* ── 달력 ──────────────────────────────── */
+  function renderCalendar(rows) {
+    var y = cursor.getFullYear(), m = cursor.getMonth();
+    var startPad = new Date(y, m, 1).getDay();
+    var days = new Date(y, m + 1, 0).getDate();
+    var cells = Math.ceil((startPad + days) / 7) * 7;
+    var today = ymd(new Date());
+
+    /* 날짜별 집계 */
+    var agg = {};
+    rows.forEach(function (it) {
+      var a = agg[it.date] || (agg[it.date] = { income: 0, expense: 0, cats: {} });
+      if (it.type === "income") a.income += it.amount; else a.expense += it.amount;
+      var key = it.type + "|" + it.category;
+      a.cats[key] = (a.cats[key] || 0) + it.amount;
+    });
+
+    var html = "";
+    for (var i = 0; i < cells; i++) {
+      var n = i - startPad + 1;
+      if (n < 1 || n > days) { html += '<div class="cal-cell blank"></div>'; continue; }
+
+      var date = y + "-" + pad(m + 1) + "-" + pad(n);
+      var dow = i % 7;
+      var a = agg[date];
+
+      var chips = "";
+      if (a) {
+        chips = Object.keys(a.cats)
+          .sort(function (p, q) { return a.cats[q] - a.cats[p]; })
+          .slice(0, 3)
+          .map(function (key) {
+            var parts = key.split("|");
+            var mt = meta(parts[0], parts[1]);
+            return '<span style="color:' + mt.color + '">' + ic(mt.icon, 15) + "</span>";
+          }).join("");
+      }
+
+      var nums = "";
+      if (a && a.income) nums += '<span class="i">+' + short(a.income) + "</span>";
+      if (a && a.expense) nums += '<span class="e">−' + short(a.expense) + "</span>";
+
+      html += '<button type="button" class="cal-cell' +
+                (date === today ? " today" : "") +
+                (date === selected ? " sel" : "") +
+              '" data-date="' + date + '">' +
+                '<span class="d' + (dow === 0 ? " sun" : dow === 6 ? " sat" : "") + '">' + n + "</span>" +
+                '<span class="chips">' + chips + "</span>" +
+                '<span class="nums">' + nums + "</span>" +
+              "</button>";
+    }
+    $("cal").innerHTML = html;
+
+    renderDayPane(rows);
+  }
+
+  function renderDayPane(rows) {
+    var pane = $("dayPane");
+    if (!selected) {
+      pane.innerHTML = blank("hand", "날짜를 누르면 그 날의 내역이 열립니다.");
+      return;
+    }
+    var day = rows.filter(function (it) { return it.date === selected; });
+    var net = day.reduce(function (s, it) {
+      return s + (it.type === "income" ? it.amount : -it.amount);
+    }, 0);
+    var d = selected.split("-");
+
+    var head = '<div class="daybar">' +
+                 "<span>" + Number(d[1]) + "월 " + Number(d[2]) + "일 (" + weekday(selected) + ")</span>" +
+                 '<button type="button" class="add" id="addHere">' + ic("plus", 15) + "이 날 추가</button>" +
+                 '<span class="sum">' + (net >= 0 ? "+" : "−") + won(Math.abs(net)) + "</span>" +
+               "</div>";
+
+    var body = day.length ? day.map(itemRow).join("")
+                          : blank("spark", "이 날은 내역이 없습니다.");
+
+    pane.innerHTML = head + '<div id="dayList">' + body + "</div>";
+
+    $("addHere").addEventListener("click", function () {
+      $("fDate").value = selected;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      $("fAmount").focus();
+    });
+    $("dayList").addEventListener("click", onListClick);
+  }
+
+  /* ── 목록 ──────────────────────────────── */
+  function renderList(rows, box) {
     if (!rows.length) {
-      box.innerHTML = '<div class="empty-state">이 달의 내역이 없습니다.<br>위에서 첫 내역을 추가해 보세요.</div>';
+      box.innerHTML = blank("folder", "이 달의 내역이 없습니다.<br>위에서 첫 내역을 추가해 보세요.");
       return;
     }
 
@@ -390,14 +1056,18 @@
 
   function itemRow(it) {
     var inc = it.type === "income";
-    return '<div class="item">' +
-             '<span class="tag' + (inc ? " income" : "") + '">' + esc(it.category) + "</span>" +
-             '<span class="memo">' + (it.memo ? esc(it.memo) : '<span class="empty">—</span>') + "</span>" +
+    return '<div class="item">' + chip(it.type, it.category) +
+             '<span class="txt">' +
+               "<b>" + esc(it.memo || it.category) + "</b>" +
+               "<em>" + esc(it.category) + (inc ? " · 수입" : "") + "</em>" +
+             "</span>" +
              '<span class="amt ' + (inc ? "income" : "expense") + '">' +
                (inc ? "+" : "−") + won(it.amount) + "</span>" +
              '<span class="acts">' +
-               '<button type="button" data-edit="' + it.id + '">수정</button>' +
-               '<button type="button" data-del="' + it.id + '">삭제</button>' +
+               '<button type="button" data-edit="' + it.id + '" title="수정" aria-label="수정">' +
+                 ic("pencil", 17) + "</button>" +
+               '<button type="button" data-del="' + it.id + '" title="삭제" aria-label="삭제">' +
+                 ic("trash", 17) + "</button>" +
              "</span>" +
            "</div>";
   }
@@ -439,6 +1109,7 @@
     // 다른 달에 입력했다면 그 달을 보여준다
     var d = new Date(data.date + "T00:00:00");
     if (monthKey(d) !== monthKey(cursor)) { cursor = new Date(d.getFullYear(), d.getMonth(), 1); }
+    selected = data.date;   // 방금 넣은 날을 달력에서 펼쳐 준다
 
     save(); resetForm(); render();
     $("fMemo").focus();
@@ -446,7 +1117,7 @@
 
   $("cancelEdit").addEventListener("click", resetForm);
 
-  $("list").addEventListener("click", function (e) {
+  function onListClick(e) {
     var btn = e.target.closest("button");
     if (!btn) return;
 
@@ -474,11 +1145,43 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
       $("fAmount").focus();
     }
+  }
+  $("list").addEventListener("click", onListClick);
+
+  /* ── 달력 클릭 / 탭 전환 ───────────────── */
+  $("cal").addEventListener("click", function (e) {
+    var cell = e.target.closest(".cal-cell");
+    if (!cell || cell.classList.contains("blank")) return;
+    var date = cell.getAttribute("data-date");
+    selected = (selected === date) ? null : date;   // 같은 날 다시 누르면 닫기
+    if (selected) $("fDate").value = selected;
+    render();
+  });
+
+  $("viewTabs").addEventListener("click", function (e) {
+    var btn = e.target.closest("button");
+    if (!btn) return;
+    view = btn.getAttribute("data-view");
+    remember(VIEW, view);
+    render();
+  });
+
+  $("anaTabs").addEventListener("click", function (e) {
+    var btn = e.target.closest("button");
+    if (!btn) return;
+    ana = btn.getAttribute("data-ana");
+    remember(ANA, ana);
+    render();
   });
 
   /* ── 월 이동 ───────────────────────────── */
+  function defaultSelection() {
+    var now = new Date();
+    selected = monthKey(now) === monthKey(cursor) ? ymd(now) : null;
+  }
   function moveMonth(delta) {
     cursor = new Date(cursor.getFullYear(), cursor.getMonth() + delta, 1);
+    defaultSelection();
     render();
   }
   $("prevM").addEventListener("click", function () { moveMonth(-1); });
@@ -486,12 +1189,13 @@
   $("todayBtn").addEventListener("click", function () {
     var n = new Date();
     cursor = new Date(n.getFullYear(), n.getMonth(), 1);
+    selected = ymd(n);
     render();
   });
 
   /* ── 내보내기 / 초기화 ─────────────────── */
   $("exportBtn").addEventListener("click", function () {
-    var rows = currentItems().slice().sort(function (a, b) {
+    var rows = itemsOf(cursor).slice().sort(function (a, b) {
       return a.date < b.date ? -1 : a.date > b.date ? 1 : a.created - b.created;
     });
     if (!rows.length) { alert("내보낼 내역이 없습니다."); return; }
@@ -510,6 +1214,7 @@
     a.click();
     setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
   });
+
 
   $("clearBtn").addEventListener("click", function () {
     if (!items.length) return;
@@ -536,8 +1241,36 @@
     });
   })();
 
+  /* ── 헤더 ──────────────────────────────── */
+  (function buildHero() {
+    /* 글자마다 조금씩 늦게 떠오르고, 이어서 천천히 위아래로 흔들린다 */
+    $("heroTitle").innerHTML = "가계부".split("").map(function (ch, i) {
+      return '<span class="ch" style="--pd:' + (i * 0.09).toFixed(2) + 's">' +
+               '<i style="--bd:' + (0.9 + i * 0.22).toFixed(2) + 's">' + ch + "</i>" +
+             "</span>";
+    }).join("");
+
+    var h = "";
+    for (var i = 0; i < 20; i++) {
+      h += '<b class="c' + (i % 3 + 1) + '" style="' +
+             "--x:" + Math.round(Math.random() * 100) + "%;" +
+             "--s:" + (6 + Math.random() * 7).toFixed(1) + "s;" +
+             "--d:" + (-Math.random() * 13).toFixed(1) + "s;" +
+             "--dx:" + Math.round(-45 + Math.random() * 90) + "px;" +
+             "--r:" + Math.round(-240 + Math.random() * 480) + "deg;" +
+             "--k:" + (0.6 + Math.random() * 0.9).toFixed(2) +
+           '"></b>';
+    }
+    $("parts").innerHTML = h;
+  })();
+
   /* ── 시작 ──────────────────────────────── */
+  Array.prototype.forEach.call(document.querySelectorAll(".gi[data-ic]"), function (el) {
+    el.innerHTML = ic(el.getAttribute("data-ic"), Number(el.getAttribute("data-sz")) || 18);
+  });
+
   $("fDate").value = ymd(new Date());
+  defaultSelection();
   fillCategories();
   render();
 })();
