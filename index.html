@@ -451,6 +451,15 @@
   .empty-state { padding: 42px 16px; text-align: center; color: var(--muted); font-size: 14.5px; }
   .empty-state .big { display: inline-flex; margin-bottom: 10px; opacity: .55; }
 
+  /* ── 저장 중 / 통신 오류 ───────────────── */
+  body.is-busy .submit, body.is-busy .acts button { opacity: .5; pointer-events: none; }
+  .netbar {
+    display: none; align-items: center; gap: 8px; margin: 0 0 14px;
+    padding: 11px 14px; border-radius: var(--radius-sm); font-size: 13.5px;
+    background: var(--expense-soft); color: var(--expense); border: 1px solid var(--line);
+  }
+  .netbar.on { display: flex; }
+
   footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
   footer .ghost { font-size: 13.5px; padding: 8px 13px; }
 
@@ -518,6 +527,9 @@
     </div>
   </header>
 
+  <div class="netbar" id="netbar">
+    <span class="gi" data-ic="spark" data-sz="16"></span><span id="netmsg"></span>
+  </div>
 
   <div class="summary">
     <div class="card i"><div class="k"><span class="gi" data-ic="heart" data-sz="17"></span>수입</div>
@@ -587,11 +599,25 @@
 
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js"
+        crossorigin="anonymous"></script>
 <script>
 (function () {
   "use strict";
 
-  var STORE = "ggb-ledger-v1";
+  /* ── Supabase ───────────────────────────
+     로그인 없이 쓰는 공용 가계부입니다. 아래 주소와 publishable 키를 아는 사람은
+     누구나 내역을 읽고 쓸 수 있습니다. */
+  var SUPABASE_URL = "https://vrkgrwpfuskcjqbdtihz.supabase.co";
+  var SUPABASE_KEY = "sb_publishable_LreZWzhmYy77JAypaXrB0w_Y-qJm1ko";
+  var sb = window.supabase
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+        auth: { persistSession: false, autoRefreshToken: false }
+      })
+    : null;
+
+  var STORE  = "ggb-ledger-v1";         // 예전 로컬 저장본 (계정으로 1회 이전)
+  var BACKUP = "ggb-ledger-v1-backup";  // 이전을 마친 뒤 남겨 두는 사본
   var THEME = "ggb-ledger-theme";
   var VIEW  = "ggb-ledger-view";
   var ANA   = "ggb-ledger-ana";
@@ -695,7 +721,7 @@
     return "winter";
   }
 
-  var items = load();
+  var items = [];                   // 시작할 때 서버에서 채운다
   var cursor = new Date();          // 보고 있는 달
   cursor.setDate(1);
   var editingId = null;
@@ -705,17 +731,95 @@
 
   var $ = function (id) { return document.getElementById(id); };
 
-  /* ── 저장소 ─────────────────────────────── */
-  function load() {
+  /* ── 저장소 (Supabase) ──────────────────── */
+  var COLS = "id,date,type,category,memo,amount,created_at";
+
+  function fromRow(r) {
+    return {
+      id: r.id, date: r.date, type: r.type, category: r.category,
+      memo: r.memo || "", amount: Number(r.amount),
+      created: Date.parse(r.created_at) || 0
+    };
+  }
+
+  /* 내역을 통째로 다시 읽어 온다. */
+  function fetchAll() {
+    return sb.from("entries").select(COLS)
+      .order("date", { ascending: true })
+      .order("created_at", { ascending: true })
+      .then(function (res) {
+        if (res.error) throw res.error;
+        return res.data.map(fromRow);
+      });
+  }
+
+  /* 서버 저장에 실패하면 화면과 서버가 어긋나므로 서버 기준으로 되돌린다. */
+  function resync() {
+    return fetchAll().then(function (rows) { items = rows; render(); },
+                           function () {});
+  }
+
+  /* 예전 localStorage 내역을 서버로 한 번만 옮긴다. */
+  function migrateLocal() {
+    var old = [];
+    try { old = JSON.parse(localStorage.getItem(STORE) || "[]"); } catch (e) {}
+    if (!Array.isArray(old) || !old.length) return Promise.resolve();
+
+    if (!confirm("이 브라우저에 저장돼 있던 내역 " + old.length + "건을 서버로 옮길까요?\n\n" +
+                 "[취소] 하면 옮기지 않습니다.\n" +
+                 "어느 쪽이든 원본은 백업으로 남겨 두며, 다시 묻지 않습니다.")) {
+      stashLocal();
+      return Promise.resolve();
+    }
+
+    var rows = old.filter(function (it) {
+      return it && /^\d{4}-\d{2}-\d{2}$/.test(it.date) &&
+             (it.type === "income" || it.type === "expense") &&
+             Math.round(Number(it.amount)) > 0;
+    }).map(function (it) {
+      return {
+        date: it.date,
+        type: it.type,
+        category: String(it.category || "기타").slice(0, 40),
+        memo: String(it.memo || "").slice(0, 200),
+        amount: Math.round(Number(it.amount)),
+        created_at: new Date(Number(it.created) || Date.now()).toISOString()
+      };
+    });
+    return insertChunk(rows, 0).then(stashLocal);
+  }
+  function insertChunk(rows, from) {
+    if (from >= rows.length) return Promise.resolve();
+    return sb.from("entries").insert(rows.slice(from, from + 400)).then(function (res) {
+      if (res.error) throw res.error;
+      return insertChunk(rows, from + 400);
+    });
+  }
+  /* 원본은 지우지 않고 백업 키로 옮겨 둔다 — 다음에 열 때 다시 묻지 않도록. */
+  function stashLocal() {
     try {
       var raw = localStorage.getItem(STORE);
-      var parsed = raw ? JSON.parse(raw) : [];
-      return Array.isArray(parsed) ? parsed : [];
-    } catch (e) { return []; }
+      if (raw) { localStorage.setItem(BACKUP, raw); localStorage.removeItem(STORE); }
+    } catch (e) {}
   }
-  function save() {
-    try { localStorage.setItem(STORE, JSON.stringify(items)); } catch (e) {}
+
+  /* ── 통신 상태 ─────────────────────────── */
+  var busyDepth = 0;
+  function busy(on) {
+    busyDepth = Math.max(0, busyDepth + (on ? 1 : -1));
+    document.body.classList.toggle("is-busy", busyDepth > 0);
   }
+  var netTimer = null;
+  function netError(what, err, sticky) {
+    var m = (err && (err.message || err.error_description)) || "알 수 없는 오류";
+    if (/Failed to fetch|NetworkError/i.test(m)) m = "서버에 연결하지 못했습니다.";
+    $("netmsg").textContent = what + " 실패 — " + m;
+    $("netbar").classList.add("on");
+    clearTimeout(netTimer);
+    if (!sticky) netTimer = setTimeout(function () { $("netbar").classList.remove("on"); }, 9000);
+  }
+  function netClear() { clearTimeout(netTimer); $("netbar").classList.remove("on"); }
+
   function pref(key, fallback, allowed) {
     try {
       var v = localStorage.getItem(key);
@@ -1096,23 +1200,32 @@
       amount: amount
     };
 
-    if (editingId) {
-      items = items.map(function (it) {
-        return it.id === editingId ? Object.assign({}, it, data) : it;
-      });
-    } else {
-      data.id = "i" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-      data.created = Date.now();
-      items.push(data);
-    }
+    var id = editingId;
+    busy(true);
+    var job = id
+      ? sb.from("entries").update(data).eq("id", id).select(COLS).single()
+      : sb.from("entries").insert(data).select(COLS).single();
 
-    // 다른 달에 입력했다면 그 달을 보여준다
-    var d = new Date(data.date + "T00:00:00");
-    if (monthKey(d) !== monthKey(cursor)) { cursor = new Date(d.getFullYear(), d.getMonth(), 1); }
-    selected = data.date;   // 방금 넣은 날을 달력에서 펼쳐 준다
+    job.then(function (res) {
+      if (res.error) throw res.error;
+      var row = fromRow(res.data);
+      if (id) {
+        items = items.map(function (it) { return it.id === id ? row : it; });
+      } else {
+        items.push(row);
+      }
 
-    save(); resetForm(); render();
-    $("fMemo").focus();
+      // 다른 달에 입력했다면 그 달을 보여준다
+      var d = new Date(row.date + "T00:00:00");
+      if (monthKey(d) !== monthKey(cursor)) { cursor = new Date(d.getFullYear(), d.getMonth(), 1); }
+      selected = row.date;   // 방금 넣은 날을 달력에서 펼쳐 준다
+
+      netClear(); resetForm(); render();
+      $("fMemo").focus();
+    })["catch"](function (err) {
+      netError(id ? "수정" : "저장", err);   // 입력한 내용은 그대로 두어 다시 시도할 수 있게
+      return resync();
+    }).then(function () { busy(false); });
   });
 
   $("cancelEdit").addEventListener("click", resetForm);
@@ -1124,9 +1237,16 @@
     var delId = btn.getAttribute("data-del");
     if (delId) {
       if (!confirm("이 내역을 삭제할까요?")) return;
-      items = items.filter(function (it) { return it.id !== delId; });
-      if (editingId === delId) resetForm();
-      save(); render();
+      busy(true);
+      sb.from("entries").delete().eq("id", delId).then(function (res) {
+        if (res.error) throw res.error;
+        items = items.filter(function (it) { return it.id !== delId; });
+        if (editingId === delId) resetForm();
+        netClear(); render();
+      })["catch"](function (err) {
+        netError("삭제", err);
+        return resync();
+      }).then(function () { busy(false); });
       return;
     }
 
@@ -1218,9 +1338,17 @@
 
   $("clearBtn").addEventListener("click", function () {
     if (!items.length) return;
-    if (!confirm("저장된 모든 내역을 삭제합니다. 계속할까요?")) return;
-    items = [];
-    save(); resetForm(); render();
+    if (!confirm("저장된 모든 내역을 삭제합니다. 되돌릴 수 없습니다. 계속할까요?")) return;
+    busy(true);
+    // PostgREST 는 조건 없는 delete 를 막으므로 «모든 행» 조건을 명시한다
+    sb.from("entries").delete().not("id", "is", null).then(function (res) {
+      if (res.error) throw res.error;
+      items = [];
+      netClear(); resetForm(); render();
+    })["catch"](function (err) {
+      netError("전체 삭제", err);
+      return resync();
+    }).then(function () { busy(false); });
   });
 
   /* ── 테마 ──────────────────────────────── */
@@ -1264,6 +1392,28 @@
     $("parts").innerHTML = h;
   })();
 
+  /* ── 서버에서 내역 받아 오기 ───────────── */
+  function boot() {
+    if (!sb) {
+      netError("시작", { message: "Supabase 라이브러리를 불러오지 못했습니다. " +
+                                  "인터넷 연결을 확인하고 새로고침해 주세요." }, true);
+      return;
+    }
+    busy(true);
+    migrateLocal()["catch"](function (err) { netError("예전 내역 이전", err); })
+      .then(fetchAll)
+      .then(function (rows) {
+        items = rows;
+        netClear();
+      })["catch"](function (err) {
+        items = [];
+        netError("내역 불러오기", err);
+      }).then(function () {
+        render();
+        busy(false);
+      });
+  }
+
   /* ── 시작 ──────────────────────────────── */
   Array.prototype.forEach.call(document.querySelectorAll(".gi[data-ic]"), function (el) {
     el.innerHTML = ic(el.getAttribute("data-ic"), Number(el.getAttribute("data-sz")) || 18);
@@ -1273,6 +1423,7 @@
   defaultSelection();
   fillCategories();
   render();
+  boot();
 })();
 </script>
 </body>
